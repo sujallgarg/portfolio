@@ -1,0 +1,171 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+
+const apiBase = import.meta.env.VITE_API_URL ?? ''
+
+const ContactTerminal = () => {
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSubmitting(true);
+    try {
+      const res = await fetch(`${apiBase}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || 'Transmission failed');
+      }
+      setSubmitted(true);
+      setFormData({ name: '', email: '', message: '' });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <section id="contact" className="py-24 px-6 bg-black border-t border-white/5">
+      <div className="max-w-4xl mx-auto">
+        
+        {/* Terminal Header Bar */}
+        <div className="bg-[#111] border border-white/10 rounded-t-md p-3 flex justify-between items-center">
+          <div className="flex gap-2">
+            <div className="w-2.5 h-2.5 bg-red-500/50 rounded-full" />
+            <div className="w-2.5 h-2.5 bg-yellow-500/50 rounded-full" />
+            <div className="w-2.5 h-2.5 bg-green-500/50 rounded-full" />
+          </div>
+          <span className="text-white/20 text-[9px] font-mono tracking-[0.3em] uppercase">
+            transmission_protocol.sh
+          </span>
+          <div className="w-10" />
+        </div>
+
+        {/* Terminal Body */}
+        <div className="bg-[#080808] border-x border-b border-white/10 rounded-b-md p-8 font-mono relative">
+          
+          <div className="mb-8 text-white/40 text-[11px] leading-relaxed">
+            <span className="text-accent">root@sujal:~$</span> ./initiate_contact <br />
+            Status: Secure Channel Established <br />
+            Encryption: AES-256 Enabled <br />
+            ------------------------------------------
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-8">
+            {/* Name Input */}
+            <div className="group">
+              <label className="text-white/30 text-[10px] uppercase tracking-widest block mb-2 group-focus-within:text-white transition-colors">
+                01_Identify_User (Name)
+              </label>
+              <div className="flex items-center gap-3">
+                <span className="text-accent">{`>`}</span>
+                <input 
+                  type="text" 
+                  name="name"
+                  onChange={handleChange}
+                  className="bg-transparent border-none outline-none text-white w-full text-sm" 
+                  placeholder="enter_alias..."
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Email Input */}
+            <div className="group">
+              <label className="text-white/30 text-[10px] uppercase tracking-widest block mb-2 group-focus-within:text-white transition-colors">
+                02_Return_Coordinates (Email)
+              </label>
+              <div className="flex items-center gap-3">
+                <span className="text-accent">{`>`}</span>
+                <input 
+                  type="email" 
+                  name="email"
+                  onChange={handleChange}
+                  className="bg-transparent border-none outline-none text-white w-full text-sm" 
+                  placeholder="user@domain.com"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Message Input */}
+            <div className="group">
+              <label className="text-white/30 text-[10px] uppercase tracking-widest block mb-2 group-focus-within:text-white transition-colors">
+                03_Payload_Details (Message)
+              </label>
+              <div className="flex items-start gap-3">
+                <span className="text-accent mt-1">{`>`}</span>
+                <textarea 
+                  name="message"
+                  onChange={handleChange}
+                  rows={4}
+                  className="bg-transparent border-none outline-none text-white w-full text-sm resize-none" 
+                  placeholder="type_your_message_here..."
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <div className="pt-4 flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-end">
+              <div className="text-[9px] text-white/10 uppercase tracking-widest font-mono">
+                System_Time: {new Date().toLocaleTimeString()}
+              </div>
+              <div className="flex flex-col items-end gap-2">
+                {error && (
+                  <p className="text-[9px] text-red-400/90 font-mono uppercase tracking-widest max-w-xs text-right">
+                    {error}
+                  </p>
+                )}
+                <motion.button
+                  whileHover={{ scale: submitting ? 1 : 1.05 }}
+                  whileTap={{ scale: submitting ? 1 : 0.95 }}
+                  type="submit"
+                  disabled={submitting}
+                  className="bg-white text-black px-8 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-colors disabled:opacity-50 disabled:pointer-events-none"
+                >
+                  {submitting ? 'Transmitting…' : 'Execute_Transfer'}
+                </motion.button>
+              </div>
+            </div>
+          </form>
+
+          {/* Success State Overlay */}
+          {submitted && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="absolute inset-0 bg-black/95 flex flex-col items-center justify-center z-20 text-center p-6"
+            >
+              <div className="w-12 h-12 border border-accent rounded-full flex items-center justify-center mb-4">
+                <div className="w-2 h-2 bg-accent animate-ping" />
+              </div>
+              <h4 className="text-white font-mono text-sm uppercase tracking-[0.5em] mb-2">Transmission_Sent</h4>
+              <p className="text-white/40 text-[10px] uppercase font-mono tracking-widest">Payload received. standby for response.</p>
+              <button 
+                onClick={() => setSubmitted(false)}
+                className="mt-8 text-[9px] text-accent underline uppercase tracking-widest"
+              >
+                Send_New_Packet
+              </button>
+            </motion.div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default ContactTerminal;
