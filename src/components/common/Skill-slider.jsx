@@ -47,7 +47,7 @@ const SkillSlider = () => {
           {duplicatedSkills.map((skill, index) => (
             <div 
               key={index} 
-              className="flex items-center gap-4 group opacity-40 hover:opacity-100 transition-opacity duration-500"
+              className="flex items-center gap-4 group opacity-40 hover:opacity-100 ease-in transition-opacity duration-500"
             >
               <img 
                 src={skill.icon} 
