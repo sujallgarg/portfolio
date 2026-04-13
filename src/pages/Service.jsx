@@ -22,10 +22,11 @@ const About = () => {
             
             <div className="aspect-[4/5] overflow-hidden bg-[#111]">
               <img 
-                src="src/assets/about.png"
+                src="src/assets/file.svg"
                 alt="Sujal Garg"
                 className="w-full h-full object-cover grayscale contrast-125 opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-700"
               />
+              
             </div>
             
             {/* Metadata overlay */}
@@ -36,6 +37,7 @@ const About = () => {
                 Focus: SAAS_VISUALS
               </p>
             </div>
+            
           </motion.div>
 
           {/* RIGHT: CONTENT COLUMN */}
